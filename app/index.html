@@ -1,0 +1,739 @@
+<meta name="dash-one-writer">
+<style>
+.bs{font-family:var(--font-anthropic-sans);container-type:inline-size;display:grid;gap:var(--cds-gap-lg);color:var(--color-fg)}
+.bs-kop h1{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:0 0 var(--cds-gap-xs)}
+.bs-kop p{margin:0;color:var(--color-fg-muted);max-width:44rem}
+.bs-kop .bs-lead{color:var(--color-fg);margin-bottom:var(--cds-gap-xs)}
+.bs-tegels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr));gap:var(--cds-gap-md)}
+.bs-tegel,.bs-paneel,.bs-kaart{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg)}
+.bs-tegel b{display:block;font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);font-variant-numeric:tabular-nums}
+.bs-tegel span{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption)}
+.bs-zoek{display:grid;gap:var(--cds-gap-md)}
+.bs-veld{position:relative;display:grid;gap:var(--cds-gap-xs);max-width:34rem}
+.bs-veld label{font-size:var(--cds-font-size-body);font-weight:var(--cds-font-weight-medium)}
+.bs-veld input{font:inherit;color:var(--color-fg);background:var(--color-bg);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-sm) var(--cds-pad-md);width:100%;box-sizing:border-box}
+.bs-veld input:focus{outline:2px solid var(--color-fg);outline-offset:1px}
+.bs-opties{position:absolute;left:0;right:0;top:100%;z-index:5;margin-top:2px;background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);overflow:hidden}
+.bs-opties:empty{display:none}
+.bs-optie{display:flex;justify-content:space-between;gap:var(--cds-gap-md);width:100%;font:inherit;font-size:var(--cds-font-size-caption);color:var(--color-fg);background:transparent;border:0;padding:var(--cds-pad-sm) var(--cds-pad-md);cursor:pointer;text-align:left}
+.bs-optie small{color:var(--color-fg-muted);font-size:inherit;white-space:nowrap}
+.bs-optie:hover,.bs-optie[aria-selected=true]{background:var(--color-bg)}
+.bs-chip{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);display:flex;flex-wrap:wrap;align-items:center;gap:var(--cds-gap-sm)}
+.bs-chip:empty{display:none}
+.bs-chip b{color:var(--color-fg);font-weight:var(--cds-font-weight-medium)}
+.bs-filters{display:flex;flex-wrap:wrap;gap:var(--cds-gap-sm) var(--cds-gap-lg)}
+.bs-groep{display:flex;align-items:center;flex-wrap:wrap;gap:var(--cds-gap-xs)}
+.bs-groep>span{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin-right:var(--cds-gap-xs)}
+.bs-check{display:inline-flex;align-items:center;gap:var(--cds-gap-xs);font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);cursor:pointer}
+.bs-knop{font:inherit;font-size:var(--cds-font-size-caption);color:var(--color-fg);background:transparent;border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-xs) var(--cds-pad-sm);cursor:pointer}
+.bs-knop[aria-pressed=true]{background:var(--color-fg);color:var(--color-bg);border-color:var(--color-fg)}
+.bs-knop:disabled{opacity:.45;cursor:default}
+.bs-duo{display:grid;gap:var(--cds-gap-md);align-items:start}
+.bs-kaartvak{position:relative;background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);overflow:hidden}
+.bs-kaartvak svg{display:block;width:100%;height:auto;touch-action:pan-x pan-y;user-select:none;cursor:crosshair}
+.bs-zoomknoppen{position:absolute;top:var(--cds-gap-sm);right:var(--cds-gap-sm);display:flex;gap:4px}
+.bs-zoomknoppen .bs-knop{background:var(--color-panel);min-width:2rem}
+.bs-zone{fill:none;stroke:var(--color-border-line);stroke-width:1;vector-effect:non-scaling-stroke}
+.bs-straten{fill:none;stroke:var(--color-fg-muted);stroke-opacity:.16;stroke-width:2.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.bs-zlabel{font-size:11px;fill:var(--color-fg-muted);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--color-panel);stroke-width:3px}
+.bs-straal{fill:var(--color-fg);fill-opacity:.05;stroke:var(--color-fg);stroke-dasharray:4 4;stroke-width:1;vector-effect:non-scaling-stroke;pointer-events:none}
+.bs-pin{cursor:pointer}
+.bs-k-gunstig{fill:var(--color-ok);stroke:var(--color-ok)}
+.bs-k-tekorten{fill:var(--color-warn);stroke:var(--color-warn)}
+.bs-k-ongunstig{fill:var(--color-bad);stroke:var(--color-bad)}
+.bs-k-deel{fill:var(--color-panel);stroke:var(--color-fg-muted)}
+.bs-k-geen{fill:var(--color-fg-muted);stroke:none;opacity:.5}
+.bs-hol{fill:var(--color-panel);stroke-width:2}
+.bs-sel{fill:none;stroke:var(--color-fg);stroke-width:2}
+.bs-ver{opacity:.2}
+.bs-noot{margin:0 0 var(--cds-gap-md);color:var(--color-fg-muted);font-size:var(--cds-font-size-caption)}
+.bs-paneel h2,.bs-sectie>h2{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0 0 var(--cds-gap-xs)}
+.bs-tabel{width:100%;border-collapse:collapse;font-size:var(--cds-font-size-caption)}
+.bs-tabel th{text-align:left;font-weight:var(--cds-font-weight-medium);color:var(--color-fg-muted);padding:var(--cds-pad-xs) var(--cds-pad-sm) var(--cds-pad-xs) 0;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.bs-tabel td{padding:var(--cds-pad-sm) var(--cds-pad-sm) var(--cds-pad-sm) 0;border-bottom:1px solid var(--color-border-line);vertical-align:middle}
+.bs-tabel tr:last-child td{border-bottom:0}
+.bs-tabel a{color:var(--color-fg);font-weight:var(--cds-font-weight-medium)}
+.bs-tabel small{display:block;color:var(--color-fg-muted);font-size:inherit}
+.bs-tabel .bs-tussen td{padding-top:var(--cds-pad-md);color:var(--color-fg-muted);font-weight:var(--cds-font-weight-medium)}
+.bs-tabel .bs-gekozen td{background:var(--color-bg)}
+.bs-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.bs-marks{display:inline-flex;gap:3px;align-items:center;flex-wrap:wrap}
+.bs-m{width:13px;height:13px;display:block;flex:none}
+.bs-m0{fill:var(--color-bad)}.bs-m1{fill:var(--color-warn)}.bs-m2{fill:var(--color-ok)}.bs-m3{fill:var(--color-fg)}
+.bs-legende{display:flex;flex-wrap:wrap;gap:var(--cds-gap-xs) var(--cds-gap-md);font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.bs-legende span{display:inline-flex;align-items:center;gap:var(--cds-gap-xs)}
+.bs-kaart{display:flex;flex-direction:column;gap:var(--cds-gap-sm);scroll-margin-top:var(--cds-gap-lg)}
+.bs-kaart h3{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0}
+.bs-leeg{color:var(--color-fg-muted);font-size:var(--cds-font-size-body)}
+.bs-meta{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);margin:0}
+.bs-badge{display:inline-block;font-size:var(--cds-font-size-caption);font-weight:var(--cds-font-weight-medium)}
+.bs-b-gunstig{color:var(--color-ok)}.bs-b-tekorten{color:var(--color-warn)}.bs-b-ongunstig,.bs-b-veiligheid{color:var(--color-bad)}.bs-b-opvolging,.bs-b-bvh{color:var(--color-fg-muted)}
+.bs-kaart p{margin:0;font-size:var(--cds-font-size-body)}
+.bs-kaart p strong{font-weight:var(--cds-font-weight-medium)}
+.bs-kaart p.bs-meta{font-size:var(--cds-font-size-caption)}
+.bs-regel{display:grid;grid-template-columns:7.5rem 1fr;gap:var(--cds-gap-sm);align-items:center;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.bs-regels{display:grid;gap:var(--cds-gap-xs)}
+.bs-waarschuwing{font-size:var(--cds-font-size-caption);color:var(--color-bad);border-left:2px solid var(--color-bad);padding-left:var(--cds-pad-sm)}
+.bs-oud{color:var(--color-warn);border-left-color:var(--color-warn)}
+.bs-kaart details{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.bs-kaart summary{cursor:pointer}
+.bs-kaart ul{list-style:none;margin:var(--cds-gap-xs) 0 0;padding:0;display:grid;gap:3px}
+.bs-kaart li{display:flex;gap:var(--cds-gap-xs);align-items:center}
+.bs-links{display:flex;flex-wrap:wrap;gap:var(--cds-gap-md);font-size:var(--cds-font-size-caption)}
+.bs-links a{color:var(--color-fg)}
+.bs-lijst{margin:0;padding-left:1.1rem;display:grid;gap:var(--cds-gap-xs);font-size:var(--cds-font-size-body)}
+@container (min-width:880px){.bs-duo{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}}
+@container (max-width:640px){.bs-v1{display:none}}
+@container (max-width:460px){.bs-v2{display:none}}
+</style>
+
+<div class="bs" lang="nl">
+  <header class="bs-kop" id="kop">
+    <h1>Basisscholen in Antwerpen</h1>
+    <p class="bs-lead">Zoek je straat of klik op de kaart. Je ziet welke scholen dicht bij je liggen en wat de onderwijsinspectie erover schreef.</p>
+    <p>Een onofficiële samenvatting van <span data-draw="n_totaal" data-source="scholen">—</span> scholen met een inspectieverslag, stand 5 november 2026. Geen ranking: lees bij elke school ook de datum en wat er onderzocht werd.</p>
+  </header>
+
+  <section class="bs-paneel bs-zoek" id="zoeken" aria-label="Zoeken">
+    <div class="bs-veld">
+      <label for="zoek">Waar woon je?</label>
+      <input id="zoek" type="search" placeholder="Straat, postcode of schoolnaam" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="zoeklijst" aria-autocomplete="list">
+      <div class="bs-opties" id="zoeklijst" role="listbox" aria-label="Suggesties" data-draw="suggesties" data-source="straten scholen zones">—</div>
+    </div>
+    <div class="bs-chip" data-draw="thuis" data-source="straten">—</div>
+    <div class="bs-filters" role="group" aria-label="Filters">
+      <div class="bs-groep" role="group" aria-label="Afstand">
+        <span>Afstand</span>
+        <button class="bs-knop" data-straal="1" disabled>1 km</button>
+        <button class="bs-knop" data-straal="2" disabled>2 km</button>
+        <button class="bs-knop" data-straal="3" disabled>3 km</button>
+        <button class="bs-knop" data-straal="0" disabled>Overal</button>
+      </div>
+      <div class="bs-groep" role="group" aria-label="Afdeling">
+        <span>Afdeling</span>
+        <button class="bs-knop" data-afdeling="alle">Alle</button>
+        <button class="bs-knop" data-afdeling="kleuter">Kleuter</button>
+        <button class="bs-knop" data-afdeling="lager">Lager</button>
+      </div>
+      <div class="bs-groep" role="group" aria-label="Methode">
+        <span>Methode</span>
+        <button class="bs-knop" data-methode="alle">Alle</button>
+        <button class="bs-knop" data-methode="Freinet">Freinet</button>
+      </div>
+      <label class="bs-check"><input type="checkbox" id="grijs" checked>Ook scholen zonder verslag</label>
+    </div>
+  </section>
+
+  <section class="bs-duo" id="kaartblok">
+    <div>
+      <div class="bs-kaartvak">
+        <div data-draw="kaart" data-source="zones straten vestigingen scholen andere">—</div>
+        <div class="bs-zoomknoppen">
+          <button class="bs-knop" id="zoom-in" aria-label="Inzoomen">+</button>
+          <button class="bs-knop" id="zoom-uit" aria-label="Uitzoomen">−</button>
+          <button class="bs-knop" id="zoom-stad">Hele stad</button>
+        </div>
+      </div>
+      <div class="bs-legende" style="margin-top:var(--cds-gap-sm)">
+        <span><svg class="bs-m" viewBox="0 0 14 14" aria-hidden="true"><circle class="bs-k-gunstig" cx="7" cy="7" r="5"/></svg>Gunstig</span>
+        <span><svg class="bs-m" viewBox="0 0 14 14" aria-hidden="true"><path class="bs-k-tekorten" d="M7 1l6 6-6 6-6-6z"/></svg>Gunstig, met tekorten</span>
+        <span><svg class="bs-m" viewBox="0 0 14 14" aria-hidden="true"><rect class="bs-k-ongunstig" x="2" y="2" width="10" height="10"/></svg>Ongunstig</span>
+        <span><svg class="bs-m" viewBox="0 0 14 14" aria-hidden="true"><circle class="bs-k-gunstig bs-hol" cx="7" cy="7" r="4.5"/></svg>Open vorm: ouder dan 5 jaar</span>
+        <span><svg class="bs-m" viewBox="0 0 14 14" aria-hidden="true"><circle class="bs-k-deel" cx="7" cy="7" r="3.5"/></svg>Deelverslag</span>
+        <span><svg class="bs-m" viewBox="0 0 14 14" aria-hidden="true"><circle class="bs-k-geen" cx="7" cy="7" r="2.5"/></svg>Geen verslag hier</span>
+      </div>
+    </div>
+    <div id="detailvak" data-draw="detail" data-source="scholen scores vestigingen andere">—</div>
+  </section>
+
+  <section class="bs-tegels" id="tellers" aria-label="Scholen per advies">
+    <div class="bs-tegel"><b data-draw="t_gunstig" data-source="scholen vestigingen">—</b><span>Gunstig, zonder tekorten</span></div>
+    <div class="bs-tegel"><b data-draw="t_tekorten" data-source="scholen vestigingen">—</b><span>Gunstig, met tekorten</span></div>
+    <div class="bs-tegel"><b data-draw="t_ongunstig" data-source="scholen vestigingen">—</b><span>Ongunstig over het onderwijs</span></div>
+    <div class="bs-tegel"><b data-draw="t_deel" data-source="scholen vestigingen">—</b><span>Alleen gebouwen of opvolging</span></div>
+  </section>
+
+  <section class="bs-paneel" id="overzicht">
+    <h2>Scholen op een rij</h2>
+    <p class="bs-noot" data-draw="resultaat" data-source="scholen vestigingen">—</p>
+    <div class="bs-legende" id="legende" style="margin-bottom:var(--cds-gap-md)">
+      <span><svg class="bs-m bs-m3" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7 10.4l-3.7 2.1.8-4.2L1 5.4l4.2-.5z"/></svg>Overstijgt de verwachting</span>
+      <span><svg class="bs-m bs-m2" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/></svg>Volgens de verwachting</span>
+      <span><svg class="bs-m bs-m1" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l6 6-6 6-6-6z"/></svg>Benadert de verwachting</span>
+      <span><svg class="bs-m bs-m0" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="2" width="10" height="10"/></svg>Beneden de verwachting</span>
+    </div>
+    <div data-draw="overzicht" data-source="scholen scores vestigingen andere">—</div>
+  </section>
+
+  <section class="bs-paneel" id="leeswijzer">
+    <h2>Zo lees je dit overzicht</h2>
+    <ul class="bs-lijst">
+      <li>De inspectie onderzoekt niet overal hetzelfde. In het lager gaat het om enkele vakken die per school verschillen, dus twee scholen zijn daar niet rechtstreeks vergelijkbaar.</li>
+      <li>De verslagen bevatten geen toetsscores. Resultaten op de Vlaamse toetsen zijn niet publiek.</li>
+      <li>Een verslag ouder dan vijf jaar weegt minder zwaar. De school kan intussen sterk veranderd zijn, en er kan een recenter verslag bestaan dat hier niet in zit.</li>
+      <li>Een opvolgingsverslag kijkt alleen na of eerdere tekorten weg zijn. Een verslag over gebouwen en veiligheid zegt niets over de kwaliteit van het onderwijs. Die twee geven dus geen beeld van de hele school.</li>
+      <li>Bij 14 scholen zijn de teksten met de hand samengevat. Bij de andere komen Sterk en Let op rechtstreeks uit de aanbevelingen in het verslag. Dat staat er dan bij.</li>
+      <li>Grijze punten zijn scholen waarvan hier geen verslag zit. Dat zegt niets over die school.</li>
+      <li>Afstanden zijn hemelsbreed, op straatniveau, tot de dichtste vestiging. Het huisnummer telt niet mee. Je zoekopdracht wordt nergens bewaard.</li>
+      <li>Dit overzicht is onofficieel. Bij twijfel geldt altijd het originele verslag op de officiële schoolfiche.</li>
+      <li>Bronnen: doorlichtingsverslagen van de Onderwijsinspectie, schoolgegevens van het Vlaams Ministerie van Onderwijs en Vorming, kaart en vestigingen van Stad Antwerpen.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const VORM = {
+  3: ['M7 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7 10.4l-3.7 2.1.8-4.2L1 5.4l4.2-.5z', 'overstijgt de verwachting'],
+  2: ['circle', 'volgens de verwachting'],
+  1: ['M7 1l6 6-6 6-6-6z', 'benadert de verwachting'],
+  0: ['rect', 'beneden de verwachting'],
+};
+const NS = 'http://www.w3.org/2000/svg';
+const OUD_NA_JAREN = 5;
+const DEEL = {kwaliteit: 'Eigen kwaliteit', kleuter: 'Kleuterafdeling', zorg: 'Zorg en begeleiding', diversiteit: 'Omgaan met diversiteit', veiligheid: 'Gebouwen en veiligheid'};
+const NIET_LAGER = Object.keys(DEEL);
+const FICHE = 'https://data-onderwijs.vlaanderen.be/onderwijsaanbod/adres.Aspx?sn=';
+const maand = new Intl.DateTimeFormat('nl-BE', {month: 'short', year: 'numeric', timeZone: 'UTC'});
+const COS = Math.cos(51.2 * Math.PI / 180);
+const M_PER_GRAAD = 111320;
+
+// Alleen in dit tabblad: het vertrekpunt gaat niet naar parameters of opslag.
+const st = {thuis: null, straal: 2, school: null, term: '', actief: 0, open: false, grijs: true};
+const beeld = {x: 0, y: 0, k: 1, W: 0, H: 0, S: 1, lo0: 0, la1: 0, ox: 0, oy: 0};
+const ALLES = ['kaart', 'detail', 'overzicht', 'resultaat', 'thuis', 't_gunstig', 't_tekorten', 't_ongunstig', 't_deel'];
+const herteken = () => { ALLES.forEach((n) => dash.draw(n)); knoppen(); };
+
+const maak = (tag, klas, tekst) => {
+  const e = document.createElement(tag);
+  if (klas) e.className = klas;
+  if (tekst !== undefined) e.textContent = tekst;
+  return e;
+};
+const vec = (tag, attrs) => {
+  const e = document.createElementNS(NS, tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => e.setAttribute(k, v));
+  return e;
+};
+const teken = (score) => {
+  const s = Number(score);
+  const svg = vec('svg', {viewBox: '0 0 14 14', class: 'bs-m bs-m' + s});
+  const [v] = VORM[s];
+  if (v === 'circle') svg.appendChild(vec('circle', {cx: 7, cy: 7, r: 5.5}));
+  else if (v === 'rect') svg.appendChild(vec('rect', {x: 2, y: 2, width: 10, height: 10}));
+  else svg.appendChild(vec('path', {d: v}));
+  return svg;
+};
+const reeks = (rijen) => {
+  const w = maak('span', 'bs-marks');
+  w.setAttribute('role', 'img');
+  w.setAttribute('aria-label', rijen.map((r) => r.onderdeel + ': ' + VORM[Number(r.score)][1]).join('; '));
+  rijen.forEach((r) => w.appendChild(teken(r.score)));
+  return w;
+};
+const klaar = (...ids) => ids.every((i) => dash.data(i).status === 'ok');
+const oud = (s) => (Date.now() - new Date(s.datum).getTime()) / 31557600000 > OUD_NA_JAREN;
+const km = (m) => (m / 1000).toFixed(1).replace('.', ',') + ' km';
+const afstand = (la1, lo1, la2, lo2) => Math.hypot((lo1 - lo2) * COS, la1 - la2) * M_PER_GRAAD;
+
+let cache = {};
+const perSchool = () => {
+  const v = dash.data('vestigingen').data;
+  if (cache.v !== v) {
+    cache.v = v;
+    cache.per = {};
+    v.forEach((x) => { (cache.per[x.nr] = cache.per[x.nr] || []).push(x); });
+  }
+  return cache.per;
+};
+const dichtst = (nr) => {
+  const lijst = perSchool()[nr] || [];
+  if (!st.thuis || !lijst.length) return null;
+  return Math.min(...lijst.map((v) => afstand(st.thuis.la, st.thuis.lo, v.la, v.lo)));
+};
+const pastFilter = (s) => {
+  const p = dash.params();
+  const a = p.afdeling ?? 'alle';
+  const m = p.methode ?? 'alle';
+  return (a === 'alle' || s[a] === 'ja') && (m === 'alle' || s.methode === m);
+};
+const binnen = (d) => !st.thuis || !st.straal || (d !== null && d <= st.straal * 1000);
+const zichtbaar = () => dash.data('scholen').data
+  .filter(pastFilter)
+  .map((s) => ({s, d: dichtst(s.nr)}))
+  .filter((r) => binnen(r.d))
+  .sort((x, y) => (st.thuis ? x.d - y.d : Number(x.s.groep) - Number(y.s.groep) || y.s.datum.localeCompare(x.s.datum)));
+const andereZichtbaar = () => (st.grijs ? dash.data('andere').data : [])
+  .filter(pastFilter)
+  .map((s) => ({s, d: dichtst(s.nr)}))
+  .filter((r) => binnen(r.d))
+  .sort((x, y) => x.d - y.d);
+const delen = (id) => {
+  const per = {};
+  dash.data('scores').data.filter((r) => r.id === id).forEach((r) => { (per[r.deel] = per[r.deel] || []).push(r); });
+  return per;
+};
+const lagerVakken = (d) => Object.keys(d).filter((k) => !NIET_LAGER.includes(k));
+const soort = (key) => ({gunstig: 'gunstig', tekorten: 'tekorten', ongunstig: 'ongunstig', veiligheid: 'ongunstig'}[key] || 'deel');
+const kies = (id) => {
+  st.school = id;
+  herteken();
+  const vak = document.getElementById('detailvak');
+  if (vak && vak.scrollIntoView && document.getElementById('kaartblok').clientWidth < 880) vak.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+};
+
+/* ---------- zoeken ---------- */
+const plat = (t) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
+const zoekIndex = () => {
+  const data = dash.data('straten').data;
+  if (cache.s !== data) {
+    cache.s = data;
+    cache.straat = data.map((r) => ({t: 'straat', n: r.n, zoek: plat(r.n), p: r.p, la: r.la, lo: r.lo}));
+  }
+  return cache.straat;
+};
+const zoneMidden = (z) => {
+  const ptn = z.ringen.split(';').sort((a, b) => b.length - a.length)[0].split(' ').map((p) => p.split(',').map(Number));
+  const lo = ptn.map((p) => p[0]); const la = ptn.map((p) => p[1]);
+  return {la: (Math.min(...la) + Math.max(...la)) / 2, lo: (Math.min(...lo) + Math.max(...lo)) / 2};
+};
+const districtVan = (p) => {
+  const z = dash.data('zones').data.find((r) => Number(r.postcode) === Number(p));
+  return z ? p + ' ' + z.district : String(p);
+};
+const suggesties = () => {
+  if (!st.term || !klaar('straten', 'zones', 'scholen')) return [];
+  const pc = (st.term.match(/\b2\d{3}\b/) || [])[0];
+  const q = plat(st.term.replace(/\b2\d{3}\b/, '').replace(/[,\s]+\d+\s*[a-z]?\s*[,\s]*$/i, '').replace(/,/g, ' '));
+  const uit = [];
+  if (!q && pc) {
+    dash.data('zones').data.filter((z) => String(z.postcode) === pc).forEach((z) => uit.push({t: 'zone', n: pc + ' ' + z.district, sub: 'Postzone', ...zoneMidden(z)}));
+  }
+  if (q.length >= 2) {
+    dash.data('scholen').data.filter((s) => plat(s.naam).includes(q)).slice(0, 3).forEach((s) => uit.push({t: 'school', n: s.naam, sub: 'School', id: s.id}));
+    const treffers = zoekIndex().filter((r) => r.zoek.includes(q) && (!pc || String(r.p) === pc));
+    treffers.sort((a, b) => Number(b.zoek.startsWith(q)) - Number(a.zoek.startsWith(q)) || a.zoek.length - b.zoek.length);
+    treffers.slice(0, 7 - uit.length).forEach((r) => uit.push({...r, sub: districtVan(r.p)}));
+  }
+  return uit;
+};
+const vul = (o) => {
+  const veld = document.getElementById('zoek');
+  st.open = false;
+  st.term = '';
+  veld.value = '';
+  veld.setAttribute('aria-expanded', 'false');
+  dash.draw('suggesties');
+  if (o.t === 'school') {
+    st.school = o.id;
+    const v = (perSchool()[(dash.data('scholen').data.find((s) => s.id === o.id) || {}).nr] || [])[0];
+    if (v) focus(v.la, v.lo, 1.2);
+    herteken();
+    return;
+  }
+  zetThuis(o.la, o.lo, o.t === 'straat' ? o.n + ', ' + districtVan(o.p) : o.n);
+};
+const zetThuis = (la, lo, label) => {
+  st.thuis = {la, lo, label};
+  if (!st.straal) st.straal = 2;
+  focus(la, lo, st.straal);
+  herteken();
+};
+dash.draw('suggesties', (el) => {
+  const lijst = st.open ? suggesties() : [];
+  el.replaceChildren(...lijst.map((o, i) => {
+    const b = maak('button', 'bs-optie');
+    b.type = 'button';
+    b.id = 'optie-' + i;
+    b.setAttribute('role', 'option');
+    b.setAttribute('aria-selected', String(i === st.actief));
+    b.appendChild(maak('span', '', o.n));
+    b.appendChild(maak('small', '', o.sub));
+    b.addEventListener('mousedown', (e) => { e.preventDefault(); vul(o); });
+    return b;
+  }));
+});
+dash.draw('thuis', (el) => {
+  if (!st.thuis) { el.replaceChildren(); return; }
+  const w = maak('button', 'bs-knop', 'Wissen');
+  w.type = 'button';
+  w.addEventListener('click', () => { st.thuis = null; herteken(); });
+  el.replaceChildren(document.createTextNode('Vertrekpunt: '), maak('b', '', st.thuis.label), w);
+});
+const veld = document.getElementById('zoek');
+veld.addEventListener('input', () => {
+  st.term = veld.value;
+  st.actief = 0;
+  st.open = true;
+  veld.setAttribute('aria-expanded', String(!!st.term));
+  dash.draw('suggesties');
+});
+veld.addEventListener('keydown', (e) => {
+  const lijst = suggesties();
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (!lijst.length) return;
+    st.actief = (st.actief + (e.key === 'ArrowDown' ? 1 : lijst.length - 1)) % lijst.length;
+    dash.draw('suggesties');
+    veld.setAttribute('aria-activedescendant', 'optie-' + st.actief);
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (lijst[st.actief]) vul(lijst[st.actief]);
+  } else if (e.key === 'Escape') {
+    st.open = false;
+    veld.setAttribute('aria-expanded', 'false');
+    dash.draw('suggesties');
+  }
+});
+veld.addEventListener('blur', () => {
+  st.open = false;
+  veld.setAttribute('aria-expanded', 'false');
+  dash.draw('suggesties');
+});
+
+/* ---------- kaart ---------- */
+const X = (lo) => (lo - beeld.lo0) * COS * beeld.S + beeld.ox;
+const Y = (la) => (beeld.la1 - la) * beeld.S + beeld.oy;
+const terugLo = (x) => (x - beeld.ox) / (COS * beeld.S) + beeld.lo0;
+const terugLa = (y) => beeld.la1 - (y - beeld.oy) / beeld.S;
+const pasBeeldToe = () => {
+  const g = document.getElementById('kaartlaag');
+  if (!g) return;
+  g.setAttribute('transform', `translate(${beeld.x} ${beeld.y}) scale(${beeld.k})`);
+  g.querySelectorAll('[data-x]').forEach((n) => n.setAttribute('transform', `translate(${n.dataset.x} ${n.dataset.y}) scale(${1 / beeld.k})`));
+  const gezet = [];
+  g.querySelectorAll('.bs-zlabel').forEach((n) => {
+    const b = n.textContent.length * 6.4 + 10;
+    const x = Number(n.dataset.x) * beeld.k + beeld.x;
+    const y = Number(n.dataset.y) * beeld.k + beeld.y;
+    const botst = gezet.some((p) => Math.abs(p.x - x) < (p.b + b) / 2 && Math.abs(p.y - y) < 20);
+    n.style.display = botst ? 'none' : '';
+    if (!botst) gezet.push({x, y, b});
+  });
+};
+const zet = (k, x, y) => {
+  beeld.k = Math.min(40, Math.max(1, k));
+  beeld.x = Math.min(0, Math.max(beeld.W * (1 - beeld.k), x));
+  beeld.y = Math.min(0, Math.max(beeld.H * (1 - beeld.k), y));
+  pasBeeldToe();
+};
+const zoomRond = (f, px, py) => {
+  const k = Math.min(40, Math.max(1, beeld.k * f));
+  const r = k / beeld.k;
+  zet(k, px - (px - beeld.x) * r, py - (py - beeld.y) * r);
+};
+const focus = (la, lo, kmStraal) => {
+  if (!beeld.W) { beeld.wacht = [la, lo, kmStraal]; return; }
+  const k = Math.min(beeld.W, beeld.H) * 0.9 / (2 * kmStraal * 1000 / M_PER_GRAAD * beeld.S);
+  const kk = Math.min(40, Math.max(1, k));
+  zet(kk, beeld.W / 2 - X(lo) * kk, beeld.H / 2 - Y(la) * kk);
+};
+const speld = (s, soortnaam, hol, gekozen, ver, id) => {
+  const g = vec('g', {class: 'bs-pin' + (ver ? ' bs-ver' : '')});
+  g.appendChild(vec('circle', {r: 11, fill: 'transparent', stroke: 'none'}));
+  const k = 'bs-k-' + soortnaam + (hol ? ' bs-hol' : '');
+  if (soortnaam === 'gunstig') g.appendChild(vec('circle', {r: hol ? 4.6 : 5.5, class: k}));
+  else if (soortnaam === 'tekorten') g.appendChild(vec('path', {d: hol ? 'M0-5.6L5.6 0 0 5.6-5.6 0z' : 'M0-6.5L6.5 0 0 6.5-6.5 0z', class: k}));
+  else if (soortnaam === 'ongunstig') g.appendChild(vec('rect', {x: -5, y: -5, width: 10, height: 10, class: k}));
+  else if (soortnaam === 'deel') g.appendChild(vec('circle', {r: 3.5, class: k}));
+  else g.appendChild(vec('circle', {r: 2.5, class: k}));
+  if (gekozen) g.appendChild(vec('circle', {r: 10, class: 'bs-sel'}));
+  const t = vec('title');
+  t.textContent = s;
+  g.appendChild(t);
+  g.addEventListener('click', (e) => { e.stopPropagation(); if (!sleep.verplaatst) kies(id); });
+  return g;
+};
+const sleep = {punten: new Map(), verplaatst: false, start: null, afst: 0};
+dash.draw('kaart', (el) => {
+  if (!klaar('zones', 'straten', 'vestigingen', 'scholen', 'andere')) { el.textContent = '—'; return; }
+  const W = Math.max(320, Math.round(el.clientWidth || 720));
+  const H = Math.round(Math.min(640, Math.max(400, W * 1.02)));
+  const vest = dash.data('vestigingen').data;
+  if (beeld.W !== W || beeld.H !== H) {
+    const la = vest.map((v) => v.la); const lo = vest.map((v) => v.lo);
+    beeld.la1 = Math.max(...la) + 0.004;
+    beeld.lo0 = Math.min(...lo) - 0.006;
+    const dla = beeld.la1 - Math.min(...la) + 0.004;
+    const dlo = Math.max(...lo) + 0.006 - beeld.lo0;
+    beeld.S = Math.min(W / (dlo * COS), H / dla);
+    beeld.ox = (W - dlo * COS * beeld.S) / 2;
+    beeld.oy = (H - dla * beeld.S) / 2;
+    beeld.W = W; beeld.H = H; beeld.k = 1; beeld.x = 0; beeld.y = 0;
+    if (beeld.wacht) { focus(...beeld.wacht); beeld.wacht = null; }
+  }
+  const svg = vec('svg', {viewBox: `0 0 ${W} ${H}`, role: 'application', 'aria-label': 'Kaart van Antwerpen met scholen. Klik op de kaart om een vertrekpunt te kiezen, of op een school voor de samenvatting.'});
+  const laag = vec('g', {id: 'kaartlaag'});
+  svg.appendChild(laag);
+  const zones = dash.data('zones').data;
+  zones.forEach((z) => {
+    const d = z.ringen.split(';').map((r) => 'M' + r.split(' ').map((p) => { const [lo, la] = p.split(',').map(Number); return X(lo).toFixed(1) + ' ' + Y(la).toFixed(1); }).join('L') + 'Z').join('');
+    laag.appendChild(vec('path', {d, class: 'bs-zone'}));
+  });
+  laag.appendChild(vec('path', {class: 'bs-straten', d: dash.data('straten').data.map((r) => 'M' + X(r.lo).toFixed(1) + ' ' + Y(r.la).toFixed(1) + 'h0').join('')}));
+  zones.forEach((z) => {
+    const m = zoneMidden(z);
+    const t = vec('text', {class: 'bs-zlabel', 'data-x': X(m.lo).toFixed(1), 'data-y': Y(m.la).toFixed(1)});
+    t.textContent = z.postcode + ' ' + z.district;
+    laag.appendChild(t);
+  });
+  if (st.thuis && st.straal) laag.appendChild(vec('circle', {class: 'bs-straal', cx: X(st.thuis.lo), cy: Y(st.thuis.la), r: st.straal * 1000 / M_PER_GRAAD * beeld.S}));
+  const per = perSchool();
+  dash.data('andere').data.filter((s) => st.grijs && pastFilter(s)).forEach((s) => {
+    (per[s.nr] || []).forEach((v) => {
+      const g = speld(s.naam + ', geen verslag in dit overzicht', 'geen', false, st.school === s.nr, st.thuis && st.straal && !binnen(dichtst(s.nr)), s.nr);
+      g.dataset.x = X(v.lo).toFixed(1); g.dataset.y = Y(v.la).toFixed(1);
+      laag.appendChild(g);
+    });
+  });
+  const volgorde = dash.data('scholen').data.filter(pastFilter).sort((a, b) => Number(b.groep) - Number(a.groep));
+  volgorde.forEach((s) => {
+    const titel = s.naam + ': ' + s.advies + ', ' + maand.format(new Date(s.datum));
+    (per[s.nr] || []).forEach((v) => {
+      const g = speld(titel, soort(s.advies_key), soort(s.advies_key) !== 'deel' && oud(s), st.school === s.id, st.thuis && st.straal && !binnen(dichtst(s.nr)), s.id);
+      g.dataset.x = X(v.lo).toFixed(1); g.dataset.y = Y(v.la).toFixed(1);
+      laag.appendChild(g);
+    });
+  });
+  if (st.thuis) {
+    const h = vec('g', {'data-x': X(st.thuis.lo).toFixed(1), 'data-y': Y(st.thuis.la).toFixed(1), 'pointer-events': 'none'});
+    h.appendChild(vec('path', {d: 'M0-13C-5-13-8-9-8-5c0 5 8 12 8 12s8-7 8-12c0-4-3-8-8-8z', fill: 'var(--color-fg)', stroke: 'var(--color-panel)', 'stroke-width': 1.5, transform: 'translate(0 -6)'}));
+    h.appendChild(vec('circle', {r: 2.8, cy: -11, fill: 'var(--color-panel)'}));
+    laag.appendChild(h);
+  }
+  const punt = (e) => {
+    const r = svg.getBoundingClientRect();
+    const f = W / (r.width || W);
+    return [(e.clientX - r.left) * f, (e.clientY - r.top) * f];
+  };
+  svg.addEventListener('pointerdown', (e) => {
+    sleep.punten.set(e.pointerId, punt(e));
+    sleep.verplaatst = false;
+    sleep.start = punt(e);
+    sleep.afst = 0;
+  });
+  svg.addEventListener('pointermove', (e) => {
+    if (!sleep.punten.has(e.pointerId)) return;
+    const nu = punt(e);
+    const voor = sleep.punten.get(e.pointerId);
+    sleep.punten.set(e.pointerId, nu);
+    if (sleep.punten.size === 2) {
+      const [a, b] = [...sleep.punten.values()];
+      const d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+      if (sleep.afst) zoomRond(d / sleep.afst, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
+      sleep.afst = d;
+      sleep.verplaatst = true;
+    } else if (e.pointerType === 'mouse') {
+      if (!sleep.verplaatst && Math.hypot(nu[0] - sleep.start[0], nu[1] - sleep.start[1]) > 5) {
+        sleep.verplaatst = true;
+        svg.setPointerCapture(e.pointerId);
+      }
+      if (sleep.verplaatst) zet(beeld.k, beeld.x + nu[0] - voor[0], beeld.y + nu[1] - voor[1]);
+    }
+  });
+  const los = (e) => { sleep.punten.delete(e.pointerId); sleep.afst = 0; };
+  svg.addEventListener('pointerup', los);
+  svg.addEventListener('pointercancel', los);
+  svg.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    const [x, y] = punt(e);
+    zoomRond(e.deltaY < 0 ? 1.25 : 0.8, x, y);
+  }, {passive: false});
+  svg.addEventListener('click', (e) => {
+    if (sleep.verplaatst) { sleep.verplaatst = false; return; }
+    const [x, y] = punt(e);
+    const gx = (x - beeld.x) / beeld.k; const gy = (y - beeld.y) / beeld.k;
+    const la = terugLa(gy); const lo = terugLo(gx);
+    const stra = dash.data('straten').data.reduce((b, r) => { const d = afstand(la, lo, r.la, r.lo); return d < b.d ? {d, r} : b; }, {d: Infinity});
+    zetThuis(la, lo, stra.d < 400 ? 'Bij ' + stra.r.n : 'Punt op de kaart');
+  });
+  el.replaceChildren(svg);
+  pasBeeldToe();
+});
+const middenZoom = (f) => zoomRond(f, beeld.W / 2, beeld.H / 2);
+document.getElementById('zoom-in').addEventListener('click', () => middenZoom(1.6));
+document.getElementById('zoom-uit').addEventListener('click', () => middenZoom(1 / 1.6));
+document.getElementById('zoom-stad').addEventListener('click', () => zet(1, 0, 0));
+
+/* ---------- cijfers en lijst ---------- */
+dash.draw('n_totaal', (el) => {
+  el.textContent = klaar('scholen') ? String(dash.data('scholen').data.length) : '—';
+});
+[['t_gunstig', ['gunstig']], ['t_tekorten', ['tekorten']], ['t_ongunstig', ['ongunstig']], ['t_deel', ['veiligheid', 'bvh', 'opvolging']]].forEach(([naam, keys]) => {
+  dash.draw(naam, (el) => {
+    el.textContent = klaar('scholen', 'vestigingen') ? String(zichtbaar().filter((r) => keys.includes(r.s.advies_key)).length) : '—';
+  });
+});
+dash.draw('resultaat', (el) => {
+  if (!klaar('scholen', 'vestigingen')) { el.textContent = '—'; return; }
+  const n = zichtbaar().length;
+  const w = n === 1 ? '1 school' : n + ' scholen';
+  if (st.thuis) el.textContent = w + ' met een verslag' + (st.straal ? ' binnen ' + st.straal + ' km' : '') + ', dichtste eerst. Klik op een school voor de samenvatting.';
+  else el.textContent = w + ' met een verslag, per soort advies. Geef je straat in om op afstand te sorteren. Elk teken is één onderdeel uit het verslag.';
+});
+dash.draw('overzicht', (el) => {
+  if (!klaar('scholen', 'scores', 'vestigingen', 'andere')) { el.textContent = '—'; return; }
+  const tabel = maak('table', 'bs-tabel');
+  const kop = maak('tr');
+  const kolommen = [['School', ''], ['Verslag', 'bs-v2'], ['Eigen kwaliteit', 'bs-v1'], ['Kleuter', ''], ['Lager', ''], ['Inbreuken', 'bs-v1']];
+  kolommen.forEach(([t, k]) => kop.appendChild(maak('th', k, t)));
+  const thead = maak('thead'); thead.appendChild(kop); tabel.appendChild(thead);
+  const body = maak('tbody');
+  const tussen = (t) => {
+    const tr = maak('tr', 'bs-tussen');
+    const td = maak('td', '', t); td.colSpan = kolommen.length; tr.appendChild(td); body.appendChild(tr);
+  };
+  const rijen = zichtbaar();
+  let groep = null;
+  rijen.forEach(({s, d: m}) => {
+    if (!st.thuis && s.groep_naam !== groep) { groep = s.groep_naam; tussen(groep); }
+    const d = delen(s.id);
+    const r = maak('tr', st.school === s.id ? 'bs-gekozen' : '');
+    const naam = maak('td');
+    const a = maak('a', '', s.naam);
+    a.href = '#detailvak';
+    a.addEventListener('click', (ev) => { ev.preventDefault(); kies(s.id); });
+    naam.appendChild(a);
+    naam.appendChild(maak('small', '', [m !== null ? km(m) : null, s.net, s.methode === 'Freinet' ? 'Freinet' : null].filter(Boolean).join(' · ')));
+    r.appendChild(naam);
+    r.appendChild(maak('td', 'bs-num bs-v2', maand.format(new Date(s.datum))));
+    const kw = maak('td', 'bs-v1');
+    if (d.kwaliteit) kw.appendChild(reeks(d.kwaliteit)); else kw.textContent = 'Niet in dit verslag';
+    r.appendChild(kw);
+    const kl = maak('td');
+    if (d.kleuter) kl.appendChild(reeks(d.kleuter)); else kl.textContent = s.kleuter === 'ja' ? 'Niet in dit verslag' : 'Geen kleuterafdeling';
+    r.appendChild(kl);
+    const la = maak('td');
+    const vakken = lagerVakken(d);
+    vakken.forEach((v) => { la.appendChild(reeks(d[v])); la.appendChild(maak('small', '', v)); });
+    if (!vakken.length) la.textContent = s.lager === 'ja' ? 'Niet in dit verslag' : 'Geen lagere afdeling';
+    r.appendChild(la);
+    r.appendChild(maak('td', 'bs-num bs-v1', String(s.inbreuken)));
+    body.appendChild(r);
+  });
+  if (!rijen.length) tussen('Geen scholen met een verslag bij deze keuze. Probeer een grotere afstand.');
+  if (st.thuis) {
+    const rest = andereZichtbaar();
+    if (rest.length) tussen('Zonder verslag in dit overzicht');
+    rest.forEach(({s, d: m}) => {
+      const r = maak('tr');
+      const td = maak('td');
+      td.colSpan = kolommen.length;
+      const a = maak('a', '', s.naam);
+      a.href = '#detailvak';
+      a.addEventListener('click', (ev) => { ev.preventDefault(); kies(s.nr); });
+      td.appendChild(a);
+      td.appendChild(maak('small', '', [km(m), s.net].join(' · ')));
+      r.appendChild(td);
+      body.appendChild(r);
+    });
+  }
+  tabel.appendChild(body);
+  el.replaceChildren(tabel);
+});
+
+const regel = (label, rijen) => {
+  const r = maak('div', 'bs-regel');
+  r.appendChild(maak('span', '', label));
+  r.appendChild(reeks(rijen));
+  return r;
+};
+const alinea = (titel, tekst) => {
+  const p = maak('p');
+  p.appendChild(maak('strong', '', titel + ': '));
+  p.appendChild(document.createTextNode(tekst));
+  return p;
+};
+const link = (href, tekst) => {
+  const a = maak('a', '', tekst);
+  a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  return a;
+};
+const adressen = (nr, val) => {
+  const l = (perSchool()[nr] || []).map((v) => v.adres);
+  return l.length ? l.join(' en ') : val;
+};
+dash.draw('detail', (el) => {
+  if (!klaar('scholen', 'scores', 'vestigingen', 'andere')) { el.textContent = '—'; return; }
+  const k = maak('article', 'bs-kaart');
+  const s = dash.data('scholen').data.find((x) => x.id === st.school);
+  const a = s ? null : dash.data('andere').data.find((x) => x.nr === st.school);
+  if (!s && !a) {
+    k.appendChild(maak('h3', '', 'Kies een school'));
+    k.appendChild(maak('p', 'bs-leeg', 'Klik op een school op de kaart of in de lijst. Hier verschijnt dan het advies, wat goed zit en wat je bij een bezoek kan vragen.'));
+    el.replaceChildren(k);
+    return;
+  }
+  const m = dichtst((s || a).nr);
+  const afstandTekst = m !== null ? km(m) + ' hemelsbreed' : null;
+  if (a) {
+    k.appendChild(maak('h3', '', a.naam));
+    k.appendChild(maak('p', 'bs-meta', [a.net, afstandTekst, adressen(a.nr, a.adres)].filter(Boolean).join(' · ')));
+    k.appendChild(maak('p', '', 'Van deze school zit geen verslag in dit overzicht. Dat zegt niets over de school. Je vindt haar verslagen op de officiële fiche.'));
+    const links = maak('div', 'bs-links');
+    links.appendChild(link(FICHE + a.nr, 'Officiële fiche en verslag'));
+    if (a.site) links.appendChild(link(a.site, 'Website'));
+    k.appendChild(links);
+    el.replaceChildren(k);
+    return;
+  }
+  const d = delen(s.id);
+  const vakken = lagerVakken(d);
+  k.id = 'school-' + s.id;
+  k.appendChild(maak('h3', '', s.naam));
+  k.appendChild(maak('span', 'bs-badge bs-b-' + s.advies_key, s.advies + ', ' + maand.format(new Date(s.datum))));
+  k.appendChild(maak('p', 'bs-meta', [s.net, s.methode === 'Freinet' ? 'Freinet' : null, afstandTekst, s.auto ? adressen(s.nr, s.adres) : s.adres].filter(Boolean).join(' · ')));
+  if (oud(s)) k.appendChild(maak('div', 'bs-waarschuwing bs-oud', 'Dit verslag is ouder dan ' + OUD_NA_JAREN + ' jaar. Vraag naar een recentere doorlichting.'));
+  if (s.opschorting) k.appendChild(maak('div', 'bs-waarschuwing', s.opschorting));
+  const regels = maak('div', 'bs-regels');
+  ['kwaliteit', 'kleuter'].forEach((n) => { if (d[n]) regels.appendChild(regel(DEEL[n], d[n])); });
+  vakken.forEach((v) => regels.appendChild(regel('Lager: ' + v.toLowerCase(), d[v])));
+  ['zorg', 'diversiteit', 'veiligheid'].forEach((n) => { if (d[n]) regels.appendChild(regel(DEEL[n], d[n])); });
+  if (regels.childElementCount) k.appendChild(regels);
+  k.appendChild(alinea('Sterk', s.sterk));
+  k.appendChild(alinea('Let op', s.letop));
+  if (s.historiek) k.appendChild(alinea('Eerder', s.historiek));
+  k.appendChild(alinea('Vraag bij een bezoek', s.vraag));
+  if (s.auto) k.appendChild(maak('p', 'bs-meta', 'Automatisch afgeleid uit de aanbevelingen in het verslag.'));
+  const uit = maak('details');
+  uit.appendChild(maak('summary', '', 'Alle onderdelen en uitspraken'));
+  const lijst = maak('ul');
+  [...['kwaliteit', 'kleuter'], ...vakken, ...['zorg', 'diversiteit', 'veiligheid']].forEach((deel) => {
+    const titel = DEEL[deel] || 'Lager: ' + deel.toLowerCase();
+    (d[deel] || []).forEach((r) => {
+      const li = maak('li');
+      li.appendChild(teken(r.score));
+      li.appendChild(maak('span', '', titel + ': ' + r.onderdeel));
+      lijst.appendChild(li);
+    });
+  });
+  uit.appendChild(lijst);
+  if (s.llb) uit.appendChild(maak('p', 'bs-meta', 'Leerlingenbegeleiding: ' + s.llb + '. Kansenbeleid: ' + (s.gok || 'niet vermeld') + '.'));
+  uit.appendChild(maak('p', 'bs-meta', 'Inbreuken op de regelgeving: ' + s.inbreuken + (s.inb_lijst ? ' (' + s.inb_lijst.split(' | ').join('; ') + ')' : '') + '.'));
+  k.appendChild(uit);
+  const links = maak('div', 'bs-links');
+  links.appendChild(link(FICHE + s.nr, 'Officiële fiche en verslag'));
+  if (s.site) links.appendChild(link(s.site, 'Website'));
+  k.appendChild(links);
+  el.replaceChildren(k);
+});
+
+const knoppen = () => {
+  const p = dash.params();
+  document.querySelectorAll('[data-afdeling]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.afdeling === (p.afdeling ?? 'alle'))));
+  document.querySelectorAll('[data-methode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.methode === (p.methode ?? 'alle'))));
+  document.querySelectorAll('[data-straal]').forEach((b) => {
+    b.disabled = !st.thuis;
+    b.setAttribute('aria-pressed', String(!!st.thuis && Number(b.dataset.straal) === st.straal));
+  });
+};
+document.querySelectorAll('[data-afdeling]').forEach((b) => b.addEventListener('click', () => dash.setParams({afdeling: b.dataset.afdeling})));
+document.querySelectorAll('[data-methode]').forEach((b) => b.addEventListener('click', () => dash.setParams({methode: b.dataset.methode})));
+document.querySelectorAll('[data-straal]').forEach((b) => b.addEventListener('click', () => {
+  st.straal = Number(b.dataset.straal);
+  if (st.thuis) { if (st.straal) focus(st.thuis.la, st.thuis.lo, st.straal); else zet(1, 0, 0); }
+  herteken();
+}));
+document.getElementById('grijs').addEventListener('change', (e) => { st.grijs = e.target.checked; herteken(); });
+dash.onData(knoppen);
+</script>

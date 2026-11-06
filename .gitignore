@@ -1,0 +1,8 @@
+__pycache__/
+node_modules/
+pipeline/v/
+pipeline/inv.json
+pipeline/meta.json
+pipeline/scholen.json
+pipeline/scores.json
+app/preview.html

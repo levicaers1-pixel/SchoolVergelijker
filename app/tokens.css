@@ -1,0 +1,7 @@
+/* Lokale vervanging van de thematokens van het Claude-dashboard. */
+:root{--color-fg:#1f1e1d;--color-fg-muted:#6b6a68;--color-bg:#fff;--color-panel:#faf9f7;--color-border-line:#e2e0db;--color-ok:#2e7d4f;--color-warn:#c77700;--color-bad:#c0392b;
+--font-anthropic-sans:system-ui,sans-serif;--font-anthropic-serif:Georgia,serif;
+--cds-gap-lg:24px;--cds-gap-md:12px;--cds-gap-sm:8px;--cds-gap-xs:4px;--cds-pad-lg:16px;--cds-pad-md:12px;--cds-pad-sm:8px;--cds-pad-xs:4px;--cds-radius:6px;
+--cds-font-size-title:28px;--cds-font-size-heading:18px;--cds-font-size-body:15px;--cds-font-size-caption:13px;--cds-font-weight-medium:500}
+@media (prefers-color-scheme:dark){:root{--color-fg:#f2f0ec;--color-fg-muted:#a8a6a1;--color-bg:#1c1b1a;--color-panel:#252422;--color-border-line:#3a3936;--color-ok:#5dbb85;--color-warn:#e5a13a;--color-bad:#e8695a}}
+body{margin:0;padding:16px;background:var(--color-bg)}
