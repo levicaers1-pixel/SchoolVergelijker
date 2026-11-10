@@ -1,4 +1,5 @@
 // Rooktest: npm i playwright && python3 app/maak_preview.py && node tests/smoke.js
+// Website: python3 app/maak_preview.py --site _site && node tests/smoke.js _site/index.html
 const {chromium} = require('playwright');
 const path = require('path');
 (async () => {
@@ -7,7 +8,8 @@ const path = require('path');
     const p = await b.newPage({viewport: {width, height: 900}});
     const fouten = [];
     p.on('pageerror', (e) => fouten.push(e.message));
-    await p.goto('file://' + path.resolve(__dirname, '../app/preview.html'));
+    await p.goto('file://' + path.resolve(process.argv[2] || path.join(__dirname, '../app/preview.html')));
+    await p.waitForTimeout(1500);
     const q = (f) => p.evaluate(f);
     if (await q(() => document.querySelectorAll('.bs-pin').length) < 200) fouten.push('te weinig punten op de kaart');
     await p.fill('#zoek', 'Diksmuidelaan');

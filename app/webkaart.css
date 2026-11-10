@@ -1,0 +1,18 @@
+/* Alleen voor de website: opmaak van de stratenkaart (webkaart.js). */
+.bs-webkaart{width:100%;height:480px;background:var(--color-panel);font:inherit}
+.bs-webkaart .maplibregl-canvas-container.maplibregl-interactive{cursor:crosshair}
+.bs-webkaart .maplibregl-canvas-container.maplibregl-interactive:active{cursor:grabbing}
+.bs-webpin{background:none;border:0;padding:0;margin:0;cursor:pointer;line-height:0}
+.bs-webpin svg{display:block;overflow:visible;filter:drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.bs-webpin .bs-k-geen{opacity:.75}
+.bs-webpin:focus-visible{outline:2px solid var(--color-fg);outline-offset:1px;border-radius:50%}
+.bs-gekozen{z-index:2}
+.bs-webthuis{z-index:3;pointer-events:none}
+.bs-webthuis svg{display:block;overflow:visible;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+.bs-webthuis path{fill:#d93025;stroke:#fff;stroke-width:1.5}
+.bs-webthuis circle{fill:#fff}
+.bs-webinfo{z-index:4}
+.bs-webinfo .maplibregl-popup-content{font:inherit;font-size:var(--cds-font-size-caption);color:var(--color-fg);background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-xs) var(--cds-pad-sm);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.bs-webinfo .maplibregl-popup-tip{display:none}
+.bs-webkaart .maplibregl-ctrl-attrib{font-size:11px}
+.bs-webkaart .maplibregl-cooperative-gesture-screen{font-family:inherit}

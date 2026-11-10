@@ -27,7 +27,7 @@ Dit geeft exact de bestanden in `data/` terug. Rooktest: `npm i playwright && no
 
 | Map | Inhoud |
 |---|---|
-| `app/` | `index.html` is de pagina zoals gepubliceerd. `dash-stub.js`, `tokens.css` en `maak_preview.py` laten ze lokaal draaien. |
+| `app/` | `index.html` is de pagina zoals gepubliceerd. `dash-stub.js`, `tokens.css` en `maak_preview.py` laten ze lokaal draaien. `webkaart.js` en `webkaart.css` geven de website een stratenkaart (MapLibre met OpenFreeMap); het dashboard en de lokale preview houden de getekende kaart. |
 | `data/` | De zes JSON-bestanden die de pagina gebruikt. |
 | `pipeline/` | Van PDF naar JSON. `hand.py` bevat de teksten van de 14 handmatige scholen. |
 | `bron/` | CSV van het Vlaams Ministerie van Onderwijs en Vorming, plus open data van Stad Antwerpen. |

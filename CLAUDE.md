@@ -11,6 +11,7 @@ Zie README.md voor structuur, datamodel en beperkingen.
 - Scholen zonder verslag krijgen geen negatieve lading.
 - Haal geen verslagen automatisch op van data-onderwijs.vlaanderen.be. De site sluit dat uit. Verslagen komen handmatig in `verslagen/auto/`.
 - Het zoekadres van een gebruiker wordt nergens bewaard of verstuurd.
+- Uitzondering, alleen op de website: de stratenkaart laadt kaartbeelden van OpenFreeMap, die zo ziet welk deel van de kaart iemand bekijkt. De zoektekst zelf blijft in de browser. In het Claude-dashboard is er geen netwerk en blijft de getekende kaart.
 
 ## Commando's
 
@@ -18,6 +19,10 @@ Zie README.md voor structuur, datamodel en beperkingen.
 - Data bouwen: `cd pipeline && ./bouw.sh`.
 - Parser controleren: `cd pipeline && python3 parse.py`.
 - Rooktest: `node tests/smoke.js`.
+
+## De website
+
+`python3 app/maak_preview.py --site _site` voegt `webkaart.js` en `webkaart.css` toe (MapLibre van unpkg, stijl `liberty` van OpenFreeMap). `index.html` gebruikt die kaart alleen als `window.bsWebkaart` bestaat, anders tekent ze de eigen kaart. De workflow `.github/workflows/pages.yml` publiceert bij elke push naar `main`.
 
 ## De pagina
 

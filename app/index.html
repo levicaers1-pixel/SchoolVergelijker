@@ -30,8 +30,8 @@
 .bs-knop:disabled{opacity:.45;cursor:default}
 .bs-duo{display:grid;gap:var(--cds-gap-md);align-items:start}
 .bs-kaartvak{position:relative;background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);overflow:hidden}
-.bs-kaartvak svg{display:block;width:100%;height:auto;touch-action:pan-x pan-y;user-select:none;cursor:crosshair}
-.bs-zoomknoppen{position:absolute;top:var(--cds-gap-sm);right:var(--cds-gap-sm);display:flex;gap:4px}
+.bs-kaartvak>[data-draw]>svg{display:block;width:100%;height:auto;touch-action:pan-x pan-y;user-select:none;cursor:crosshair}
+.bs-zoomknoppen{position:absolute;top:var(--cds-gap-sm);right:var(--cds-gap-sm);display:flex;gap:4px;z-index:1000}
 .bs-zoomknoppen .bs-knop{background:var(--color-panel);min-width:2rem}
 .bs-zone{fill:none;stroke:var(--color-border-line);stroke-width:1;vector-effect:non-scaling-stroke}
 .bs-straten{fill:none;stroke:var(--color-fg-muted);stroke-opacity:.16;stroke-width:2.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
@@ -177,6 +177,7 @@
       <li>Afstanden zijn hemelsbreed, op straatniveau, tot de dichtste vestiging. Het huisnummer telt niet mee. Je zoekopdracht wordt nergens bewaard.</li>
       <li>Dit overzicht is onofficieel. Bij twijfel geldt altijd het originele verslag op de officiële schoolfiche.</li>
       <li>Bronnen: doorlichtingsverslagen van de Onderwijsinspectie, schoolgegevens van het Vlaams Ministerie van Onderwijs en Vorming, kaart en vestigingen van Stad Antwerpen.</li>
+      <li id="webkaart-noot" hidden>De stratenkaart komt van OpenFreeMap, met gegevens van OpenStreetMap. OpenFreeMap ziet welk deel van de kaart je bekijkt, maar niet wat je in het zoekveld typt.</li>
     </ul>
   </section>
 </div>
@@ -391,6 +392,9 @@ veld.addEventListener('blur', () => {
 });
 
 /* ---------- kaart ---------- */
+// Alleen op de website: webkaart.js tekent dan een stratenkaart. In het dashboard bestaat die niet.
+const WEB = window.bsWebkaart;
+if (WEB) document.getElementById('webkaart-noot').hidden = false;
 const X = (lo) => (lo - beeld.lo0) * COS * beeld.S + beeld.ox;
 const Y = (la) => (beeld.la1 - la) * beeld.S + beeld.oy;
 const terugLo = (x) => (x - beeld.ox) / (COS * beeld.S) + beeld.lo0;
@@ -422,6 +426,7 @@ const zoomRond = (f, px, py) => {
   zet(k, px - (px - beeld.x) * r, py - (py - beeld.y) * r);
 };
 const focus = (la, lo, kmStraal) => {
+  if (WEB) { WEB.focus(la, lo, kmStraal); return; }
   if (!beeld.W) { beeld.wacht = [la, lo, kmStraal]; return; }
   const k = Math.min(beeld.W, beeld.H) * 0.9 / (2 * kmStraal * 1000 / M_PER_GRAAD * beeld.S);
   const kk = Math.min(40, Math.max(1, k));
@@ -446,6 +451,7 @@ const speld = (s, soortnaam, hol, gekozen, ver, id) => {
 const sleep = {punten: new Map(), verplaatst: false, start: null, afst: 0};
 dash.draw('kaart', (el) => {
   if (!klaar('zones', 'straten', 'vestigingen', 'scholen', 'andere')) { el.textContent = '—'; return; }
+  if (WEB) { WEB.teken(el, {st, pastFilter, soort, oud, binnen, dichtst, perSchool, kies, zetThuis, maand, afstand}); return; }
   const W = Math.max(320, Math.round(el.clientWidth || 720));
   const H = Math.round(Math.min(640, Math.max(400, W * 1.02)));
   const vest = dash.data('vestigingen').data;
@@ -551,9 +557,9 @@ dash.draw('kaart', (el) => {
   pasBeeldToe();
 });
 const middenZoom = (f) => zoomRond(f, beeld.W / 2, beeld.H / 2);
-document.getElementById('zoom-in').addEventListener('click', () => middenZoom(1.6));
-document.getElementById('zoom-uit').addEventListener('click', () => middenZoom(1 / 1.6));
-document.getElementById('zoom-stad').addEventListener('click', () => zet(1, 0, 0));
+document.getElementById('zoom-in').addEventListener('click', () => (WEB ? WEB.zoom(1) : middenZoom(1.6)));
+document.getElementById('zoom-uit').addEventListener('click', () => (WEB ? WEB.zoom(-1) : middenZoom(1 / 1.6)));
+document.getElementById('zoom-stad').addEventListener('click', () => (WEB ? WEB.stad() : zet(1, 0, 0)));
 
 /* ---------- cijfers en lijst ---------- */
 dash.draw('n_totaal', (el) => {
