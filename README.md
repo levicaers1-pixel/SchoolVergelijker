@@ -2,7 +2,11 @@
 
 Overzicht voor ouders: zoek je straat, zie de basisscholen in de buurt en lees wat de onderwijsinspectie erover schreef. Bewust geen ranking of totaalscore.
 
-Live versie (Claude-dashboard, privé tot je deelt): https://claude.ai/artifact/YPPx5FkQ6ho3nRHJbmwyWX
+Website: https://levicaers1-pixel.github.io/SchoolVergelijker/
+
+Claude-dashboard (privé tot je deelt): https://claude.ai/artifact/YPPx5FkQ6ho3nRHJbmwyWX
+
+De website wordt bij elke push naar `main` die `app/` of `data/` wijzigt opnieuw gebouwd via `.github/workflows/pages.yml` (`python3 app/maak_preview.py --site _site`).
 
 ## Snel starten
 
