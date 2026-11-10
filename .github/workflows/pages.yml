@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths: ['app/**', 'data/**', '.github/workflows/pages.yml']
   workflow_dispatch:
+  # Een commit van 'Data bouwen' start zelf geen workflows, dus wachten we daarop.
+  workflow_run:
+    workflows: ['Data bouwen']
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read

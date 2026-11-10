@@ -4,7 +4,7 @@ out=[]
 for f in sorted(glob.glob('../verslagen/auto/*.pdf')):
     b=os.path.basename(f)[:-4]
     t='v/'+re.sub(r'\W+','_',b)+'.txt'
-    subprocess.run(['pdftotext','-layout',f,t])
+    subprocess.run(['pdftotext','-enc','UTF-8','-layout',f,t])
     s=open(t,encoding='utf8',errors='replace').read()
     c=re.sub(r'[ \t]+',' ',s)
     nr=re.search(r'Instellingsnummer\s+(?:\d+ - )?(\d+)',c)
